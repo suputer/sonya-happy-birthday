@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MultiGram</title>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        body {
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            font-size: 20px;
+        }
+
+        .hidden { display: none; }
+
+        .fade-in { animation: fadeIn 1s forwards; }
+
+        .chat-container {
+    display: none;
+    flex-direction: column;
+    width: 100vw;
+    height: 100vh; /* Растягивает фон на весь экран */
+    background: white;
+    color: black;
+    padding: 10px;
+    overflow-y: auto; /* Добавляет прокрутку, если чатов много */
+}
+
+        .chat-header {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .chat-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .chat-item:hover { background: #f0f0f0; }
+
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+        }
+
+        .chat-window {
+            display: none;
+            flex-direction: column;
+            width: 100vw;
+            height: 100vh;
+            background: white;
+            color: black;
+            border-radius: 0;
+            padding: 10px;
+            overflow-y: auto;
+        }
+
+        .message-box {
+            padding: 10px;
+            border-radius: 10px;
+            background: #ddd;
+            margin-bottom: 10px;
+            text-align: left;
+            font-size: 16px;
+        }
+
+        .message-box.sent {
+            background: #bbf;
+            align-self: flex-end;
+            text-align: right;
+            margin-right: 10px;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            max-width: 80%;
+        }
+
+        .response-box {
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            padding: 10px;
+            box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .response-input {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .send-button {
+            padding: 8px;
+            border: none;
+            background: blue;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .back-button {
+            margin-bottom: 10px;
+            padding: 8px;
+            border: none;
+            background: red;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body onclick="startChat()">
+    <div id="message1" class="fade-in">У вас сегодня день рождение...</div>
+    <div id="message2" class="hidden">В курсе?..</div>
+    <div id="message3" class="hidden">Проверь свой MultiGram!</div>
+
+    <div id="chatSection" class="chat-container hidden">
+        <div class="chat-header">MultiGram</div>
+        <div class="chat-list" id="chatList"></div>
+    </div>
+
+    <div id="chatWindow" class="chat-window hidden"></div>
+
+<style>
+    .unread-indicator {
+        width: 18px;
+        height: 18px;
+        background: blue;
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        position: absolute;
+        top: 10px;
+        right: 15px;
+    }
+</style>
+
+<script>
+    let step = 0;
+    function startChat() {
+        if (step === 0) {
+            document.getElementById("message1").style.display = "none";
+            document.getElementById("message2").classList.remove("hidden");
+        } else if (step === 1) {
+            document.getElementById("message2").style.display = "none";
+            document.getElementById("message3").classList.remove("hidden");
+        } else if (step === 2) {
+            document.body.style.backgroundColor = "black";
+            document.getElementById("message3").style.display = "none";
+            document.getElementById("chatSection").classList.remove("hidden");
+            document.getElementById("chatSection").style.display = "flex";
+            loadChats();
+        }
+        step++;
+    }
+
+    function loadChats() {
+        const chats = [
+            { name: "Грей", message: "С днём рождения, Соня! Я знаю, что ты фанатеешь по мне, я не мог тебя не поздравить, желаю, чтобы ты была не такая серая как я, а так же, пусть у тебя наконец-то будут мои перчатки...", avatar: "grey.png" },
+            { name: "Силко", message: "Я тысячу раз представлял этот момент... Но так и не придумал, что сказать в честь твоего день рождения, возможно лучше всего будет пожелать — выдержанности, пусть никто тебя не сломает, с днём рождения!", avatar: "silko.png" },
+            { name: "Моргарт", message: "Спустя долгие пути хакерства, я нашёл способ пробраться в людской интернет! Ради того, чтобы написать 'С днём рождения!', для тех, кто мне дорог!", avatar: "morgart.png" },
+            { name: "Стоун", message: "Ты конечно, не Эггман, но тоже чертовски важный человек! Пожалуйста, иди к своей цели и рано или поздно — ты сделаешь то, что не смог даже я, с днём рождения, Софья!", avatar: "stoun.png" },
+            { name: "Натали", message: "С днём рождения, с мира Miraculous!)", avatar: "nathale.png" },
+            { name: "Ванесса", message: "Это офицер Ванесса! Вас задержано... На пару минут, вы обязаны услышать мои поздравления! Желаю всегда быть на стороне закона и не работать в странных пиццериях, с днём рождения!", avatar: "vanessa.png" },
+            { name: "Клод Фролло", message: "Каким бы плохим я не был, ты то, всегда прекрасна! Твоя фигура... Твои глаза, они чудесны! Приятно было наблюдать, как твои глаза передвигаются из строчки в строчку, когда ты читала мою биографию! С днём рождения, моя луна.", avatar: "clod.png" },
+            { name: "Рэндалл", message: "В честь вашего дня рождения, приглашаю вас к себе попить чаю... С днём рождения!", avatar: "rendall.png" },
+            { name: "Сын", message: "С днём рождения, мама 🥹🥹🥹", avatar: "oboroten.png" },
+            { name: "Dark cacao", message: "Hmm, someone's birthday! People like you are interesting to me, I won't forget to congratulate you on your birthday! Ahem, happy birthday!", avatar: "dark.png" }
+        ];
+        const chatList = document.getElementById("chatList");
+        chatList.innerHTML = "";
+
+        chats.forEach((chat, index) => {
+            const chatItem = document.createElement("div");
+            chatItem.classList.add("chat-item");
+            chatItem.style.position = "relative";
+            chatItem.innerHTML = `
+                <img src="${chat.avatar}" class="chat-avatar">
+                <span>${chat.name}</span>
+                <div class="unread-indicator" id="unread-${index}">1</div>
+            `;
+            chatItem.onclick = () => openChat(chat, index);
+            chatList.appendChild(chatItem);
+        });
+    }
+
+    function openChat(chat, index) {
+        document.getElementById(`unread-${index}`).style.display = "none";
+        document.getElementById("chatSection").style.display = "none";
+        const chatWindow = document.getElementById("chatWindow");
+        chatWindow.style.overflowY = "auto";
+        chatWindow.innerHTML = `
+            <button class="back-button" onclick="closeChat()">Назад</button>
+            <div class="chat-header">${chat.name}</div>
+            <div class="message-box">${chat.message}</div>
+            <div class="response-box">
+                <input type="text" class="response-input" id="userMessage" placeholder="Написать сообщение..." onkeypress="handleKeyPress(event)">
+                <button class="send-button" onclick="sendMessage()">Отправить</button>
+            </div>
+        `;
+        chatWindow.classList.remove("hidden");
+        chatWindow.style.display = "flex";
+    }
+
+    function closeChat() {
+        document.getElementById("chatWindow").style.display = "none";
+        document.getElementById("chatSection").style.display = "flex";
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === "Enter") {
+            sendMessage();
+        }
+    }
+
+    function sendMessage() {
+        const input = document.getElementById("userMessage");
+        if (input.value.trim() !== "") {
+            const chatWindow = document.getElementById("chatWindow");
+            const newMessage = document.createElement("div");
+            newMessage.classList.add("message-box", "sent");
+            newMessage.innerText = input.value;
+            chatWindow.appendChild(newMessage);
+            input.value = "";
+        }
+    }
+</script>
+</body>
+</html>
